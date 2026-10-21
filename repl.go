@@ -4,28 +4,20 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+    "github.com/tmcausla/gogo_pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
 	name 		string
 	description string
-	callback 	func() error
+	callback 	func(*config) error
 }
 
-var commandList map[string]cliCommand
-func init() {
-	commandList = map[string]cliCommand{
-		"help": {
-			name: "help",
-			description: "Displays a help message",
-			callback: commandHelp,
-		},
-		"exit": {
-			name: 		 "exit",
-			description: "Exit the Pokedex",
-			callback: 	 commandExit,
-		},
-	}
+type config struct {
+	cmdList          map[string]cliCommand
+    nextLocationsURL *string
+    prevLocationsURL *string
+    client           pokeapi.Client
 }
 
 func cleanInput(text string) []string {
@@ -33,7 +25,7 @@ func cleanInput(text string) []string {
 	return strings.Fields(cleanText)
 }
 
-func startRepl() {
+func startRepl(c *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
     for {
@@ -48,11 +40,13 @@ func startRepl() {
         }
 
         firstWord := words[0]
-        if cmd, ok := commandList[firstWord]; ok {
-            err := cmd.callback()
+        if cmd, ok := c.cmdList[firstWord]; ok {
+            err := cmd.callback(c)
             if err != nil {
                 fmt.Println("Unknown command")
             }
+        } else {
+            fmt.Println("Unknown command\nType 'help' to see list of valid commands")
         }
     }
 }
