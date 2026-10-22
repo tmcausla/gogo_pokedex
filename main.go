@@ -1,10 +1,12 @@
 package main
 import (
     "github.com/tmcausla/gogo_pokedex/internal/pokeapi"
+    "time"
 )
 
 func main() {
     base_url := "https://pokeapi.co/api/v2/location-area/"
+    cacheInterval := 10 * time.Second
     replConfig := &config{
         cmdList: map[string]cliCommand{
             "help": {
@@ -27,11 +29,27 @@ func main() {
                 description: "Displays the previous 20 area locations",
                 callback:    commandMapB,
             },
+            "explore": {
+                name:        "explore {location}",
+                description: "Displays a list of pokemon found at a location",
+                callback:    commandExplore,
+            },
+            "catch": {
+                name:        "catch {pokemon}",
+                description: "Attempt to catch a Pokemon",
+                callback:    commandCatch,
+            },
+            "inspect": {
+                name:        "inspect {pokemon}",
+                description: "Displays stats of a caught Pokemon",
+                callback:    commandInspect,
+            },
         },
         nextLocationsURL: &base_url,
         prevLocationsURL: nil,
+        pokedex: map[string]pokeapi.Pokemon{},
     }
-    replConfig.client = pokeapi.NewClient()
+    replConfig.client = pokeapi.NewClient(cacheInterval) 
 
     
     startRepl(replConfig)

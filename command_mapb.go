@@ -1,13 +1,13 @@
 package main
 import "fmt"
 
-func commandMapB(c *config) error {
+func commandMapB(c *config, keyword string) error {
 	if c.prevLocationsURL == nil {
 		fmt.Println("you're on the first page")
 		return nil
 	}
 
-	locationList, err := c.client.ListLocations(*c.prevLocationsURL)
+	locationList, err := c.client.GetLocationList(*c.prevLocationsURL)
 	if err != nil {
 		return err
 	}

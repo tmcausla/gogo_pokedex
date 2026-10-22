@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name 		string
 	description string
-	callback 	func(*config) error
+	callback 	func(*config, string) error
 }
 
 type config struct {
@@ -18,6 +18,7 @@ type config struct {
     nextLocationsURL *string
     prevLocationsURL *string
     client           pokeapi.Client
+    pokedex          map[string]pokeapi.Pokemon
 }
 
 func cleanInput(text string) []string {
@@ -40,8 +41,13 @@ func startRepl(c *config) {
         }
 
         firstWord := words[0]
+        keyword := ""
+        if len(words) > 1 {
+            keyword = words[1]
+        }
+
         if cmd, ok := c.cmdList[firstWord]; ok {
-            err := cmd.callback(c)
+            err := cmd.callback(c, keyword)
             if err != nil {
                 fmt.Println("Unknown command")
             }

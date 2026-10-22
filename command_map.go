@@ -1,13 +1,13 @@
 package main
 import "fmt"
 
-func commandMap(c *config) error {
+func commandMap(c *config, keyword string) error {
 	if c.nextLocationsURL == nil {
 		fmt.Println("you're on the last page")
 		return nil
 	}
 
-	locationList, err := c.client.ListLocations(*c.nextLocationsURL)
+	locationList, err := c.client.GetLocationList(*c.nextLocationsURL)
 	if err != nil {
 		return err
 	}
