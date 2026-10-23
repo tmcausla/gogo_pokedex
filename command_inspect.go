@@ -2,11 +2,21 @@ package main
 import "fmt"
 
 func commandInspect(c *config, keyword string) error {
+	pokemon, ok := c.pokedex[keyword]
+	if !ok {
+		fmt.Printf("you haven't caught that pokemon\nuse 'catch %s' to throw a Pokeball at it!\n", keyword)
+		return nil
+	}
+	
+	fmt.Printf("Name: %s\nHeight: %d\nWeight: %d\nStats:\n", pokemon.Name, pokemon.Height, pokemon.Weight)
+	for _, pokestat := range pokemon.Stats {
+		fmt.Printf("  -%s: %d\n", pokestat.Stat.Name, pokestat.BaseStat)
+	}
 
-	// TO DO:
-	// Build out pokemon struct to include stats and types
+	fmt.Println("Types:")
+	for _, poketype := range pokemon.TypeList {
+		fmt.Printf("  - %s\n", poketype.Type.Name)
+	}
 
-	pokemon := c.pokedex[keyword]
-	fmt.Printf("Name: %s\nHeight: %d\nWeight: %d\n", pokemon.Name, pokemon.Height, pokemon.Weight)
 	return nil
 }
